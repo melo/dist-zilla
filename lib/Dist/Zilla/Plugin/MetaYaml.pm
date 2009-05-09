@@ -34,23 +34,6 @@ sub gather_files {
   $meta = Hash::Merge::Simple::merge($meta, $_->metadata)
     for $self->zilla->plugins_with(-MetaProvider)->flatten;
 
-  # Flatten lists with a single element
-  # workaround for simplistic Parse::CPAN::Meta YAML parser
-  # used by Test::CPAN::Meta used by Plugin::MetaTests
-  # We limit this to the authors entry for now, although a general
-  # solution could be used
-  # 
-  #   while (my ($key, $value) = each %$meta) {
-  #     if (ref($value) eq 'ARRAY' && @$value == 1) {
-  #       $meta->{$key} = $value->[0];
-  #     }
-  #   }
-  if (exists $meta->{author}
-      && ref($meta->{author}) eq 'ARRAY'
-      && @{$meta->{author}} == 1) {
-    $meta->{author} = $meta->{author}[0];
-  }
-
   my $file = Dist::Zilla::File::InMemory->new({
     name    => 'META.yml',
     content => YAML::XS::Dump($meta),
