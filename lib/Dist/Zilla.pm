@@ -418,6 +418,8 @@ sub prereq {
   $prereq = $prereq->merge( $_->prereq )
     for $self->plugins_with(-FixedPrereqs)->flatten;
 
+  $_->filter_prereqs($prereq) for $self->plugins_with(-PrereqFilter)->flatten;
+
   return $prereq;
 }
 
